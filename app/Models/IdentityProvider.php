@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Image extends Model
+class IdentityProvider extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'post_id',
-        'image',
+        'id',
+        'name'
     ];
 
-    public function posts()
+    public function user()
     {
-        return $this->hasOne(Post::class);
+        return $this->belongsTo(User::class);
     }
 }

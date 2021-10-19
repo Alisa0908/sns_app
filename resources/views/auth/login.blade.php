@@ -52,5 +52,12 @@
                 </x-button>
             </div>
         </form>
+        <div class="form-group mt-5">
+            <label for="name" class="col-sm-4 col-form-label text-md-right">SNSログイン</label>
+            <div class="d-flex justify-content-around">
+                <a href="{{ url('auth/github')}}" class="btn btn-secondary"><i class="fab fa-github"> GitHub</i></a>
+                <a href="{{ url('auth/google')}}" class="btn btn-danger"><i class="fab fa-google"> Google</i></a>
+            </div>
+        </div>
     </x-auth-card>
 </x-guest-layout>

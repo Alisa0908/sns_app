@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Http\Requests\PostRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Image;
+use Exception;
 
 class PostController extends Controller
 {
@@ -14,7 +18,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::all();
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -24,18 +29,48 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\PostRequest;  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        //
+        $post = new Post($request->all());
+        $post->user_id = $request->user()->id;
+
+        if (!$file = $request->file('image')) {
+            throw new Exception('ファイルの保存に失敗しました');
+        }
+
+        DB::beginTransaction();
+        try {
+            $post->save();
+
+            $path = Storage::putFile('posts', $file);
+
+            $image = new Image([
+                'post_id' => $post->id,
+                'image' => basename($path),
+            ]);
+
+            $image->save();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            if (Storage::exists($path)) {
+                Storage::delete($path);
+            }
+            DB::rollBack();
+            return back()->withInput()->withErrors($e->getMessage());
+        }
+
+        return redirect()->route('posts.index')
+            ->with(['flash_message' => '登録が完了しました']);
     }
 
     /**
@@ -46,7 +81,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -57,19 +92,28 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts.edit', compact('post'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\PostRequest;  $request
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+        $post->fill($request->all());
+
+        try {
+            $post->save();
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors($e->getMessage());
+        }
+
+        return redirect()->route('posts.show', $post)
+        ->with(['flash_message' => '更新が完了しました']);
     }
 
     /**
@@ -80,6 +124,21 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $path = $post->image_path;
+        DB::beginTransaction();
+        try {
+            $post->delete();
+            $post->image->delete();
+            if (!Storage::delete($path)) {
+                throw new \Exception('画像ファイルの削除に失敗しました');
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+            return back()->withInput()->withErrors($e->getMessage());
+        }
+
+        return redirect()->route('posts.index')->with('flash_message', '投稿を削除しました');
     }
 }
