@@ -42,8 +42,8 @@
                 <label class="block text-gray-700 text-sm mb-2" for="image">
                     画像
                 </label>
-                <input type="file" name="image" class="border-gray-300">
-                {{-- <input type="file" name="image[]" class="border-gray-300" multiple> --}}
+                {{-- <input type="file" name="image" class="border-gray-300"> --}}
+                <input type="file" name="image[]" class="border-gray-300" multiple>
             </div>
             <input type="submit" value="投稿"
                 class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">

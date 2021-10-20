@@ -40,18 +40,24 @@ class PostController extends Controller
      */
     public function store(PostRequest $request)
     {
+        dd($request->file('image'));
         $post = new Post($request->all());
         $post->user_id = $request->user()->id;
 
-        if (!$file = $request->file('image')) {
+        $files = $request->file('image');
+
+        if (!$files = $request->file('image')) {
             throw new Exception('ファイルの保存に失敗しました');
         }
 
+
+        
         DB::beginTransaction();
         try {
             $post->save();
-
-            $path = Storage::putFile('posts', $file);
+            foreach ($files as $file) {
+                $path = Storage::putFile('posts', $file);
+            }
 
             $image = new Image([
                 'post_id' => $post->id,

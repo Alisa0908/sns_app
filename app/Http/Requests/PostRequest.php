@@ -31,7 +31,8 @@ class PostRequest extends FormRequest
         ];
         if ($route === 'posts.store' ||
             ($route === 'posts.update' && $this->file('image'))) {
-            $rule['image'] = 'required|file|image|mimes:jpeg,png';
+            $rule['image'] = 'required';
+            // $rule['image'] = 'required|file|image|mimes:jpeg,png';
         }
 
         return $rule;
