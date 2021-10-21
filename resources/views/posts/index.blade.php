@@ -23,4 +23,6 @@
                     </a>
                 </article>
             @endforeach
+        </div>
+    </div>
 </x-app-layout>

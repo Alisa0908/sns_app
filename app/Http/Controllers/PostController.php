@@ -74,7 +74,9 @@ class PostController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             if (!empty($path)) {
-                Storage::delete($path);
+                foreach ($paths as $path) {
+                    Storage::delete($path);
+                }
             }
             DB::rollBack();
             return back()->withInput()->withErrors($e->getMessage());
@@ -150,7 +152,6 @@ class PostController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return back()->withInput()->withErrors($e->getMessage());
         }
 
