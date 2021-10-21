@@ -135,14 +135,18 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $path = $post->image_path;
+        $delete_file_paths = $post->image_paths;
         DB::beginTransaction();
         try {
+            // dd($post->image_path);
             $post->delete();
-            $post->image->delete();
-            if (!Storage::delete($path)) {
-                throw new \Exception('画像ファイルの削除に失敗しました');
+
+            foreach ($delete_file_paths as $delete_file_path) {
+                if (!Storage::delete($delete_file_path)) {
+                    throw new \Exception('ファイル削除に失敗しました');
+                }
             }
+            
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

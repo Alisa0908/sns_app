@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('投稿内容') }}
             </h2>
-    </x-slot>
+        </x-slot>
         <h2 class="text-center text-lg font-bold pt-6 tracking-widest">投稿編集</h2>
 
         @if ($errors->any())
@@ -13,7 +13,7 @@
                     <b>{{ count($errors) }}件のエラーがあります。</b>
                 </p>
                 <ul>
-                    @foreach($errors->all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
@@ -44,7 +44,9 @@
                 <label class="block text-gray-700 text-sm mb-2" for="image">
                     ブログ用画像
                 </label>
-                <img src="{{ $post->image_url }}" alt="" class="mb-4 md:w-2/5 sm:auto">
+                @foreach ($post->image_urls as $image_url)
+                    <img class="w-full mb-2" src="{{ $image_url }}" alt="">
+                @endforeach
                 <input type="file" name="image" class="border-gray-300">
             </div>
             <input type="submit" value="更新"
