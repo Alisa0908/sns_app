@@ -1,1 +1,1 @@
-<h1 class="text-lg">ブレスト</h1>
+<h1 class="text-lg">ペイン共有アプリ</h1>
