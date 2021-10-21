@@ -83,7 +83,7 @@ class PostController extends Controller
         }
 
         return redirect()->route('posts.index')
-            ->with(['flash_message' => '登録が完了しました']);
+            ->with(['notice' => '登録が完了しました']);
     }
 
     /**
@@ -126,7 +126,7 @@ class PostController extends Controller
         }
 
         return redirect()->route('posts.show', $post)
-            ->with(['flash_message' => '更新が完了しました']);
+            ->with(['notice' => '更新が完了しました']);
     }
 
     /**
@@ -155,6 +155,6 @@ class PostController extends Controller
             return back()->withInput()->withErrors($e->getMessage());
         }
 
-        return redirect()->route('posts.index')->with('flash_message', '投稿を削除しました');
+        return redirect()->route('posts.index')->with('notice', '投稿を削除しました');
     }
 }
