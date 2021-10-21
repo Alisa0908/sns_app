@@ -7,6 +7,10 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## テーブル設計のスプレッドシート
+<a href="https://docs.google.com/spreadsheets/d/1IJsaIXOB1CIM8AWQh2UDEKNbEyKYtCj8c3hlieFKxaQ/edit#gid=1692118147">こちらをクリック</a>
+
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
