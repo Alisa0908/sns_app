@@ -40,35 +40,40 @@ class PostController extends Controller
      */
     public function store(PostRequest $request)
     {
-        dd($request->file('image'));
         $post = new Post($request->all());
         $post->user_id = $request->user()->id;
 
-        $files = $request->file('image');
+        $files = $request->image;
 
-        if (!$files = $request->file('image')) {
-            throw new Exception('ファイルの保存に失敗しました');
-        }
+        // $request->validate([
+        //     'image' => 'required',
+        //     'image.*' => 'required|file|image|mimes:jpeg,png'
+        // ]);
 
-
-        
         DB::beginTransaction();
         try {
             $post->save();
+
+            $paths = [];
+            
             foreach ($files as $file) {
                 $path = Storage::putFile('posts', $file);
+
+                if (!$path) {
+                    throw new Exception('ファイルの保存に失敗しました');
+                }
+
+                $paths[] = $path;
+
+                $image = new Image([
+                    'post_id' => $post->id,
+                    'image' => basename($path),
+                ]);
+                $image->save();
             }
-
-            $image = new Image([
-                'post_id' => $post->id,
-                'image' => basename($path),
-            ]);
-
-            $image->save();
-
             DB::commit();
         } catch (\Exception $e) {
-            if (Storage::exists($path)) {
+            if (!empty($path)) {
                 Storage::delete($path);
             }
             DB::rollBack();
@@ -119,7 +124,7 @@ class PostController extends Controller
         }
 
         return redirect()->route('posts.show', $post)
-        ->with(['flash_message' => '更新が完了しました']);
+            ->with(['flash_message' => '更新が完了しました']);
     }
 
     /**

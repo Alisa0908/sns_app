@@ -38,13 +38,32 @@ class Post extends Model
 
     public function getImagePathAttribute()
     {
-        return 'posts/' . $this->image->image;
+        return 'posts/' . $this->images[0]->image;
     }
+
     public function getImageUrlAttribute()
     {
         if (config('filesystems.default') == 'gcs') {
             return Storage::temporaryUrl($this->image_path, now()->addMinutes(5));
         }
         return Storage::url($this->image_path);
+    }
+
+    public function getImagePathsAttribute()
+    {
+        $paths = [];
+        foreach ($this->images as $image) {
+            $paths[] = 'posts/' . $image->image;
+        }
+        return $paths;
+    }
+
+    public function getImageUrlsAttribute()
+    {
+        $urls = [];
+        foreach ($this->image_paths as $path) {
+            $urls[] = Storage::url($path);
+        }
+        return $urls;
     }
 }
